@@ -7,8 +7,7 @@ let wordle
 const getWordle = () => {
   fetch('http://localhost:8000/word')
     .then(response => response.json())
-    .then(json => {
-      console.log(json)
+    .then(json => { 
       wordle = json.toUpperCase()
     })
     .catch(err => console.log(err))
@@ -80,19 +79,15 @@ keys.forEach(key => {
 })
 
 const handleClick = (letter) => {
-  console.log('clicked', letter)
   if (letter  === '«') {
     deleteLetter()
-    console.log('guessRows', guessRows)
     return
   }
   if (letter === 'ENTER') {
     checkRow()
-    console.log('guessRows', guessRows)
     return
   }
   addLetter(letter)
-  console.log('guessRows', guessRows)
 }
 
 const addLetter = (letter) => {
@@ -117,25 +112,34 @@ const deleteLetter = () => {
 
 const checkRow = () => {
   const guess = guessRows[currentRow].join('')
-
   if (currentTile > 4) {
-    console.log('guess is ' + guess + ',', 'wordle is ' + wordle)
-    flipTile()
-    if (wordle == guess) {
-      showMessage('Magnificent!')
-      isGameOver = true
-      return
-    } else {
-      if (currentRow >= 5) {
-        isGameOver = true
-        showMessage('Game Over')
-        return
-      }
-      if (currentRow < 5) {
-        currentRow++
-        currentTile = 0
-      }
-    }
+    fetch(`http://localhost:8000/check/?word=${guess}`)
+      .then(response => response.json())
+      .then(json => {
+        if (json === 'Entry word not found') {
+          showMessage('word not in list')
+          return
+        } else {
+          flipTile()
+          if (wordle == guess) {
+            showMessage('Magnificent!')
+            isGameOver = true
+            return
+          } else {
+            if (currentRow >= 5) {
+              isGameOver = true
+              showMessage('Game Over')
+              return
+            }
+            if (currentRow < 5) {
+              currentRow++
+              currentTile = 0
+            }
+          }
+        }
+      }).catch(err => console.log(err))
+
+    
   }
 }
 
@@ -173,7 +177,6 @@ const flipTile = () => {
       checkWordle = checkWordle.replace(guess.letter, '')
     }
   })
-  console.log('guess', guess)
 
   rowTiles.forEach((tile, index) => {
     setTimeout(() => {
