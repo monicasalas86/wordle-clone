@@ -79,7 +79,8 @@ keys.forEach(key => {
 })
 
 const handleClick = (letter) => {
-  if (letter  === '«') {
+  if (!isGameOver) {
+    if (letter  === '«') {
     deleteLetter()
     return
   }
@@ -88,6 +89,7 @@ const handleClick = (letter) => {
     return
   }
   addLetter(letter)
+  }
 }
 
 const addLetter = (letter) => {
