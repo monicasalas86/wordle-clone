@@ -139,6 +139,8 @@ const flipTile = () => {
   rowTiles.forEach((tile, index) => {
     const dataLetter = tile.getAttribute('data')
 
+    setTimeout(() => {
+      tile.classList.add('flip')
       if(dataLetter == wordle[index]) {
         tile.classList.add('green-overlay')
       } else if (wordle.includes(dataLetter)) {
@@ -146,5 +148,6 @@ const flipTile = () => {
       } else {
         tile.classList.add('grey-overlay')
       }
+    }, 500 * index)
   })
 }
